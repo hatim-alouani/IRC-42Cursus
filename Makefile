@@ -1,11 +1,12 @@
 NAME = ircserv
 
-SRC_FILES = main.cpp
+SRC_FILES = main.cpp server.cpp client.cpp channel.cpp
 OBJ_FILES = $(SRC_FILES:.cpp=.o)
 
-HEADERS = #
+HEADERS = server.hpp client.hpp channel.hpp
 
-CC = c++
+# CC = c++ 
+CC = g++-15 #for linux
 CFLAGS = #-Wall -Wextra -Werror -std=c++98
 
 all : $(NAME)
