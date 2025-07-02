@@ -19,10 +19,12 @@ class Client
 {
 	private :
 		std::string name;
+		std::string nickname;
 		int client_fd;
 	public :
 		Client(int fd);
 		int get_fd() const;
 };
+
 
 #endif

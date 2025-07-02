@@ -3,15 +3,15 @@
 Channel::Channel(const std::string& name, const std::string& key) : name(name) , key(key), topic(""){
 }
 
-const std::string% Channel::getName() const{
+const std::string& Channel::getName() const{
     return this->name;
 }
 
-const std::string% Channel::getTopic() const{
+const std::string& Channel::getTopic() const{
     return this->topic;
 }
 
-const std::string% Channel::getKey() const{
+const std::string& Channel::getKey() const{
     return this->key;
 }
 void Channel::setTopic(std::string& topic) const{
