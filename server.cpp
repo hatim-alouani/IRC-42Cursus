@@ -12,7 +12,12 @@ void Server::start_server()
 
 	while (true)
 	{
-		int check_poll = poll(pfds.data(), pfds.size(), -1);
+		int check_poll = poll(pfds.data(), pfds.size(), BLOCK_WAIT);
+		if (check_poll < 0)
+		{
+			std::cerr << "pll " << std::endl;
+			break;
+		}
 		if (pfds[0].revents & POLLIN)
 		{
 			int new_client_fd = accept(server_fd, (struct sockaddr *)&client_addr, &client_len);/*!*/
@@ -21,11 +26,12 @@ void Server::start_server()
 				std::cerr << "error accepting new client." << std::endl;
 				continue;
 			}
-			fcntl(new_client_fd, F_SETFL, O_NONBLOCK);
-			std::cout << "new client connected!" << "\n" << std::endl;
+			/*fcntl(new_client_fd, F_SETFL, O_NONBLOCK);*/
 			struct pollfd new_pfd; new_pfd.fd = new_client_fd; new_pfd.events = POLLIN; new_pfd.revents = 0;
 			pfds.push_back(new_pfd);
+			/*now I gotta check the password and the rest of data before accepting him or not */
 			clients.push_back(Client(new_client_fd));
+			std::cout << "new client connected!" << "\n" << std::endl;
 		}
 
 		int i = 1;
@@ -46,6 +52,7 @@ void Server::start_server()
 				else
 				{
 					buff[n] = '\0';
+
 					std::cout << "received form " << i << ": " << buff << std::endl;
 				}
 			}
@@ -57,7 +64,7 @@ void Server::start_server()
 
 Server::Server(int port, std::string password) : port(port), password(password)
 {
-	server_fd = socket(AF_INET, SOCK_STREAM, 0);
+	server_fd = socket(AF_INET, SOCK_STREAM, DEF_PROTOCOL);
 
 	fcntl(server_fd, F_SETFL, O_NONBLOCK);
 
@@ -69,5 +76,5 @@ Server::Server(int port, std::string password) : port(port), password(password)
 
 	bind(server_fd, (sockaddr *)&serv_add, sizeof(serv_add));
 
-	listen(server_fd, 1);
+	listen(server_fd, MAX_PENDING);
 }

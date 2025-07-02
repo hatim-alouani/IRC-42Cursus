@@ -11,6 +11,10 @@
 #include <poll.h>
 #include <cstring>
 
+#define DEF_PROTOCOL 0 /*the default protocol for IPv4 TCP, which is TCP itself.*/
+#define MAX_PENDING 1 /*is the backlog queue size (max pending connections waiting).*/
+#define BLOCK_WAIT -1 /*blocks indefinitely until at least one socket has some activity*/
+
 class Client
 {
 	private :
