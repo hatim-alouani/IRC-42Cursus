@@ -15,23 +15,23 @@ void Server::start_server()
 		int check_poll = poll(pfds.data(), pfds.size(), BLOCK_WAIT);
 		if (check_poll < 0)
 		{
-			std::cerr << "pll " << std::endl;
+			std::cerr << "poll " << std::endl;
 			break;
 		}
 		if (pfds[0].revents & POLLIN)
 		{
-			int new_client_fd = accept(server_fd, (struct sockaddr *)&client_addr, &client_len);/*!*/
-			if (new_client_fd < 0)
+			int new_users_fd = accept(server_fd, (struct sockaddr *)&client_addr, &client_len);/*!*/
+			if (new_users_fd < 0)
 			{
 				std::cerr << "error accepting new client." << std::endl;
 				continue;
 			}
-			/*fcntl(new_client_fd, F_SETFL, O_NONBLOCK);*/
-			struct pollfd new_pfd; new_pfd.fd = new_client_fd; new_pfd.events = POLLIN; new_pfd.revents = 0;
+
+			struct pollfd new_pfd; new_pfd.fd = new_users_fd; new_pfd.events = POLLIN; new_pfd.revents = 0;
 			pfds.push_back(new_pfd);
-			/*now I gotta check the password and the rest of data before accepting him or not */
-			clients.push_back(Client(new_client_fd));
-			std::cout << "new client connected!" << "\n" << std::endl;
+
+			pending_users.push_back(new_users_fd);
+			std::cout << "New client connected, waiting for authentication..." << std::endl;
 		}
 
 		int i = 1;
@@ -45,14 +45,31 @@ void Server::start_server()
 				{
 					close (pfds[i].fd);
 					std::cout << "Client disconnected!" << std::endl;
+					// pfds.erase(pfds.begin() + i);
+					// users.erase(users.begin() + (i - 1));
+					remove_pending_client(pfds[i].fd);
+					remove_user(pfds[i].fd);
 					pfds.erase(pfds.begin() + i);
-					clients.erase(clients.begin() + (i - 1));
 					i--;
 				}
 				else
 				{
 					buff[n] = '\0';
+					PendingClient *pending = look_for_pending(pfds[i].fd);
+					User *user = look_for_user(pfds[i].fd);
 
+					if (pending)
+					{
+						/*deal with pending*/
+						if (isReadyForRegistration((std::string&)buff, pending))
+							std::cout << "marhba biiik" << std::endl;
+						else
+							std::cout << "sir t9wd" << std::endl;
+					}
+					else if (user)
+					{
+						/*deal with user*/
+					}
 					std::cout << "received form " << i << ": " << buff << std::endl;
 				}
 			}

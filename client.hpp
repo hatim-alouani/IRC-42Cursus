@@ -15,15 +15,17 @@
 #define MAX_PENDING 1 /*is the backlog queue size (max pending connections waiting).*/
 #define BLOCK_WAIT -1 /*blocks indefinitely until at least one socket has some activity*/
 
-class Client
+class User
 {
 	private :
-		std::string name;
+		std::string username;
 		std::string nickname;
-		int client_fd;
+		int users_fd;
 	public :
-		Client(int fd);
+		User(int fd);
 		int get_fd() const;
+		std::string getUsername() const;
+		std::string getNickname() const;
 };
 
 

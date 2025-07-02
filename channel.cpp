@@ -26,43 +26,43 @@ bool checkKey(const std::string& key) const{
     return this->Key == key;
 }
 
-bool isClientInChannel(int client_fd) const{
-    return std::find(clients_fd.begin(), clients_fd.end(), client_fd)
+bool isClientInChannel(int users_fd) const{
+    return std::find(users_fd.begin(), users_fd.end(), users_fd)
 }
 
-bool addClient(int client_fd, const std::string& key){
-    if (isClientInChannel(client_fd) || (hasKey() && !checkKey(key)))
+bool addClient(int users_fd, const std::string& key){
+    if (isClientInChannel(users_fd) || (hasKey() && !checkKey(key)))
         return flase;
-    clients_fd.push_back(client_fd);
+    users_fd.push_back(users_fd);
 }
 
-void Channel::removeClient(int client_fd) {
+void Channel::removeClient(int users_fd) {
     std::vector<int>::iterator client_vector;
-    client_vector = std::find(clients_fd.begin(), clients_fd.end(), client_fd);
-    if (client_vector != clients_fd.end())
-        clients_fd.erase(client_vector);
-    client_vector = std::find(operators_fd.begin(), operators_fd.end(), client_fd);
+    client_vector = std::find(users_fd.begin(), users_fd.end(), users_fd);
+    if (client_vector != users_fd.end())
+        users_fd.erase(client_vector);
+    client_vector = std::find(operators_fd.begin(), operators_fd.end(), users_fd);
     if (client_vector != operators_fd.end())
         operators_fd.erase(client_vector);
-    client_vector = std::find(inviteds_fd.begin(), inviteds_fd.end(), client_fd);
+    client_vector = std::find(inviteds_fd.begin(), inviteds_fd.end(), users_fd);
     if (client_vector != inviteds_fd.end())
         inviteds_fd.erase(client_vector);
 }
 
-bool isOperator(int client_fd) const{
-    return std::find(operators_fd.begin(), operators_fd.end(), client_fd);
+bool isOperator(int users_fd) const{
+    return std::find(operators_fd.begin(), operators_fd.end(), users_fd);
 }
 
-void addOperator(int client_fd){
-    if (!isOperator(client_fd))
-        operators_fd.push_back(client_fd);
+void addOperator(int users_fd){
+    if (!isOperator(users_fd))
+        operators_fd.push_back(users_fd);
 }
 
-bool isInvited(int client_fd) const{
-    return std::find(inviteds_fd.begin(), inviteds_fd.end(), client_fd);
+bool isInvited(int users_fd) const{
+    return std::find(inviteds_fd.begin(), inviteds_fd.end(), users_fd);
 }
 
-void invite(int client_fd){
-    if (!isInvited(client_fd))
-        inviteds_fd.push_back(client_fd);
+void invite(int users_fd){
+    if (!isInvited(users_fd))
+        inviteds_fd.push_back(users_fd);
 }
