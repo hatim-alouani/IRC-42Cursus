@@ -61,14 +61,15 @@ void Server::start_server()
 					if (pending)
 					{
 						/*deal with pending*/
-						if (isReadyForRegistration((std::string&)buff, pending))
+						if (isReadyForRegistration((std::string&)buff, pending)){
 							std::cout << "marhba biiik" << std::endl;
-						else
-							std::cout << "sir t9wd" << std::endl;
+							//add the pending client to the users
+						}
 					}
 					else if (user)
 					{
 						/*deal with user*/
+						dealWIthUser((std::string&)buff, user);
 					}
 					std::cout << "received form " << i << ": " << buff << std::endl;
 				}
@@ -94,4 +95,33 @@ Server::Server(int port, std::string password) : port(port), password(password)
 	bind(server_fd, (sockaddr *)&serv_add, sizeof(serv_add));
 
 	listen(server_fd, MAX_PENDING);
+}
+
+std::vector <User> Server::getUsers(){
+	return this->users;
+}
+
+Channel* Server::getChannel(std::string& name, std::string& key){
+	std::vector <Channel>::iterator it = channels.begin();
+	for (; it != channels.end(); ++it)
+		if (it->getName() == name)
+			return &(*it);
+	Channel new_channel(name, key);
+	channels.push_back(new_channel);
+	return &channels.back();
+}
+
+void Server::dealWIthUser(std::string& buff, User* user){
+	std::vector<std::string> tokens = splitBySpace(buff);
+	if (tokens.empty()) {
+		std::cout << "Empty command" << std::endl;
+		return;
+	}
+	std::string command = tokens[0];
+	if (command == "JOIN"){
+		std::string name = tokens[1];
+		std::string key = tokens[2];
+		Channel* channel = getChannel(name, key);
+		channel->handleJoinCommand(user, key);
+	}
 }

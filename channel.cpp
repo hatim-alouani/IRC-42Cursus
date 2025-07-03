@@ -1,4 +1,5 @@
 #include "channel.hpp"
+#include "user.hpp"
 
 Channel::Channel(const std::string& name, const std::string& key) : name(name) , key(key), topic(""){
 }
@@ -14,55 +15,66 @@ const std::string& Channel::getTopic() const{
 const std::string& Channel::getKey() const{
     return this->key;
 }
-void Channel::setTopic(std::string& topic) const{
+void Channel::setTopic(const std::string& topic){
     this->topic = topic;
 }
 
-bool hasKey() const{
+bool Channel::hasKey() const{
     return !this->key.empty();
 }
 
-bool checkKey(const std::string& key) const{
-    return this->Key == key;
+bool Channel::checkKey(const std::string& key) const{
+    return this->key == key;
 }
 
-bool isClientInChannel(int users_fd) const{
-    return std::find(users_fd.begin(), users_fd.end(), users_fd)
+bool Channel::isUserInChannel(int user_fd) const{
+    return std::find(users_fd.begin(), users_fd.end(), user_fd) != users_fd.end();
 }
 
-bool addClient(int users_fd, const std::string& key){
-    if (isClientInChannel(users_fd) || (hasKey() && !checkKey(key)))
-        return flase;
-    users_fd.push_back(users_fd);
+void Channel::addUser(int user_fd, const std::string& key){
+    if (isUserInChannel(user_fd)){
+		std::cout << "User already in Channel : " << name << std::endl;
+        return ;
+	}
+	if (hasKey() && !checkKey(key)){
+		std::cout << "Key incorrect : " << name << std::endl;
+        return ;
+	}
+    users_fd.push_back(user_fd);
+	std::cout << "User added successfully" << std::endl;
 }
 
-void Channel::removeClient(int users_fd) {
-    std::vector<int>::iterator client_vector;
-    client_vector = std::find(users_fd.begin(), users_fd.end(), users_fd);
-    if (client_vector != users_fd.end())
-        users_fd.erase(client_vector);
-    client_vector = std::find(operators_fd.begin(), operators_fd.end(), users_fd);
-    if (client_vector != operators_fd.end())
-        operators_fd.erase(client_vector);
-    client_vector = std::find(inviteds_fd.begin(), inviteds_fd.end(), users_fd);
-    if (client_vector != inviteds_fd.end())
-        inviteds_fd.erase(client_vector);
+void Channel::removeUser(int user_fd) {
+    std::vector<int>::iterator user_vector;
+    user_vector = std::find(users_fd.begin(), users_fd.end(), user_fd);
+    if (user_vector != users_fd.end())
+        users_fd.erase(user_vector);
+    user_vector = std::find(operators_fd.begin(), operators_fd.end(), user_fd);
+    if (user_vector != operators_fd.end())
+        operators_fd.erase(user_vector);
+    user_vector = std::find(inviteds_fd.begin(), inviteds_fd.end(), user_fd);
+    if (user_vector != inviteds_fd.end())
+        inviteds_fd.erase(user_vector);
 }
 
-bool isOperator(int users_fd) const{
-    return std::find(operators_fd.begin(), operators_fd.end(), users_fd);
+bool Channel::isOperator(int user_fd) const{
+    return std::find(operators_fd.begin(), operators_fd.end(), user_fd) != users_fd.end();
 }
 
-void addOperator(int users_fd){
-    if (!isOperator(users_fd))
-        operators_fd.push_back(users_fd);
+void Channel::addOperator(int user_fd){
+    if (!isOperator(user_fd))
+        operators_fd.push_back(user_fd);
 }
 
-bool isInvited(int users_fd) const{
-    return std::find(inviteds_fd.begin(), inviteds_fd.end(), users_fd);
+bool Channel::isInvited(int user_fd) const{
+    return std::find(inviteds_fd.begin(), inviteds_fd.end(), user_fd) != users_fd.end();
 }
 
-void invite(int users_fd){
-    if (!isInvited(users_fd))
-        inviteds_fd.push_back(users_fd);
+void Channel::invite(int user_fd){
+    if (!isInvited(user_fd))
+        inviteds_fd.push_back(user_fd);
+}
+
+void Channel::handleJoinCommand(User* user, std::string& key){
+	addUser(user->get_fd(), key);
 }

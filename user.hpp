@@ -1,5 +1,5 @@
-#ifndef CLIENT_HPP
-#define CLIENT_HPP
+#ifndef USER_HPP
+#define USER_HPP
 
 #include <iostream>
 #include <sys/socket.h>
@@ -20,7 +20,7 @@ class User
 	private :
 		std::string username;
 		std::string nickname;
-		int users_fd;
+		int user_fd;
 	public :
 		User(int fd);
 		int get_fd() const;

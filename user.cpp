@@ -1,13 +1,9 @@
 #include "server.hpp"
+#include "user.hpp"
 
 int User::get_fd() const
 {
-	return (users_fd);
-}
-
-User::User(int fd):users_fd(fd)
-{
-	/*init the rest of data later */
+	return (user_fd);
 }
 
 std::string User::getNickname() const{

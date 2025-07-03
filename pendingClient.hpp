@@ -1,14 +1,14 @@
 #ifndef PENDINGCLIENT_HPP
 #define PENDINGCLIENT_HPP
 
-#include "client.hpp"
+#include "user.hpp"
 
 class PendingClient{
 	private:
 		std::string nickname;
 		std::string username;
 		std::string password;
-		int users_fd;
+		int user_fd;
 
 		bool password_set;
 		bool nickname_set;
@@ -45,10 +45,10 @@ class PendingClient{
 		bool checkUsername(std::string& username, std::vector <User> users) const;
 		bool checkNickname(std::string& nickname, std::vector <User> users) const;
 
-		void handleRegistration(std::string& comand, std::string& password, std::vector <User> users);
-		void handleUserComand(std::string& username, std::vector <User> users);
-		void handleNickComand(std::string& nickname, std::vector <User> users);
-		void handlePassComand(std::string& password, std::string& truePassword);
+		void handleRegistration(std::string& buff, std::string& password, std::vector <User> users);
+		void handleUserCommand(std::string& username, std::vector <User> users);
+		void handleNickCommand(std::string& nickname, std::vector <User> users);
+		void handlePassCommand(std::string& password, std::string& truePassword);
 
 	};
 

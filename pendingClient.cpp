@@ -2,7 +2,7 @@
 #include "server.hpp"
 
 PendingClient::PendingClient(int fd){
-	this->users_fd = fd;
+	this->user_fd = fd;
 	this->nickname = "";
 	this->password = "";
 	this->username = "";
@@ -14,36 +14,36 @@ PendingClient::PendingClient(int fd){
 	this->password_valid = false;
 }
 
-bool Server::isReadyForRegistration(std::string& comand, PendingClient* pending) const{
+bool Server::isReadyForRegistration(std::string& buff, PendingClient* pending) const{
 	std::string pwd = password;
-	pending->handleRegistration(comand, pwd, users);
+	pending->handleRegistration(buff, pwd, users);
 	if (pending->get_username_set() && pending->get_nickname_set() && pending->get_password_set() && pending->get_username_valid() && pending->get_nickname_valid() && pending->get_password_valid())
 		return true;
 	return false;
 }
 
-void PendingClient::handleRegistration(std::string& comand, std::string& password, std::vector <User> users){
-	std::vector<std::string> tokens = splitBySpace(comand);
+void PendingClient::handleRegistration(std::string& buff, std::string& password, std::vector <User> users){
+	std::vector<std::string> tokens = splitBySpace(buff);
 	if (tokens.empty()) {
 		std::cout << "Empty command" << std::endl;
 		return;
 	}
 	std::string command = tokens[0];
 	if (command == "NICK") {
-		handleNickComand(tokens[1], users);
+		handleNickCommand(tokens[1], users);
 	}
 	else if (command == "USER") {
-		handleUserComand(tokens[1], users);
+		handleUserCommand(tokens[1], users);
 	}
 	else if (command == "PASS") {
-		handlePassComand(tokens[1], password);
+		handlePassCommand(tokens[1], password);
 	}
 	else {
 		std::cout << "Unknown command: " << command << std::endl;
 	}
 }
 
-void PendingClient::handleUserComand(std::string& username, std::vector <User> users){
+void PendingClient::handleUserCommand(std::string& username, std::vector <User> users){
 	setUsername(username);
 	if (isUsernameSet())
 		this->username_set = true;
@@ -51,7 +51,7 @@ void PendingClient::handleUserComand(std::string& username, std::vector <User> u
 		this->username_valid = true;
 }
 
-void PendingClient::handleNickComand(std::string& nickname, std::vector <User> users){
+void PendingClient::handleNickCommand(std::string& nickname, std::vector <User> users){
 	setNickname(nickname);
 	if (isNicknameSet())
 		this->nickname_set = true;
@@ -59,7 +59,7 @@ void PendingClient::handleNickComand(std::string& nickname, std::vector <User> u
 		this->nickname_valid = true;
 }
 
-void PendingClient::handlePassComand(std::string& password, std::string& truePassword){
+void PendingClient::handlePassCommand(std::string& password, std::string& truePassword){
 	setPassword(password);
 	if (isPasswordSet())
 		this->password_set = true;
@@ -144,7 +144,7 @@ std::vector<std::string> splitBySpace(const std::string& input) {
 
 int PendingClient::get_fd() const
 {
-	return users_fd;
+	return user_fd;
 }
 
 std::string PendingClient::getNickname() const{
