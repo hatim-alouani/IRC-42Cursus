@@ -2,7 +2,7 @@
 
 User *Server::look_for_user(int fd)
 {
-	int i = 0;
+	size_t i = 0;
 	while (i < users.size())
 	{
 		if (users[i].get_fd() == fd)
@@ -14,7 +14,7 @@ User *Server::look_for_user(int fd)
 
 PendingClient *Server::look_for_pending(int fd)
 {
-	int i = 0;
+	size_t i = 0;
 	while (i < pending_users.size())
 	{
 		if (pending_users[i].get_fd() == fd)
@@ -38,7 +38,7 @@ void Server::remove_pending_client(int fd)
 
 void Server::remove_user(int fd)
 {
-	int i = 0;
+	size_t i = 0;
 	while (i < users.size())
 	{
 		if (users[i].get_fd() == fd)

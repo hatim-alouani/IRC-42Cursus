@@ -10,23 +10,46 @@
 #include <fcntl.h>
 #include <poll.h>
 #include <cstring>
-
-#define DEF_PROTOCOL 0 /*the default protocol for IPv4 TCP, which is TCP itself.*/
-#define MAX_PENDING 1 /*is the backlog queue size (max pending connections waiting).*/
-#define BLOCK_WAIT -1 /*blocks indefinitely until at least one socket has some activity*/
+#include <cstdlib>
+#include <csignal>
+#include <set>
 
 class User
 {
 	private :
-		std::string username;
-		std::string nickname;
 		int user_fd;
+		std::string username;
+		std::string hostname;
+		std::string servername;
+		std::string realname;
+		std::string nickname;
+		int nbrChannels;
+		std::string buffer;
+		std::set<std::string> joinedChannels;
 	public :
-		User(int fd);
-		int get_fd() const;
-		std::string getUsername() const;
-		std::string getNickname() const;
-};
+		User(int fd, std::string username, std::string hostname, std::string servername, std::string realname, std::string nickname);
 
+		int get_fd() const;
+		const std::string getUsername() const;
+		const std::string getHostname() const;
+		const std::string getServername() const;
+		const std::string getRealname() const;
+		const std::string getNickname() const;
+		const std::string getBuffer() const;
+		int getNbrChannels() const;
+		const std::set<std::string>& getChannels() const;
+
+		void setBufferEmpty();
+		void setBuffer(std::string buffer);
+		void setUsername(std::string& username);
+		void setHostname(std::string& username);
+		void setServername(std::string& username);
+		void setRealname(std::string& username);
+		void setNickname(std::string& nickname);
+
+		void plusChannel() ;
+		void joinChannel(const std::string& name);
+    	void leaveChannel(const std::string& name);
+};
 
 #endif
